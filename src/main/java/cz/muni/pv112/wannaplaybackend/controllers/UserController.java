@@ -1,7 +1,9 @@
 package cz.muni.pv112.wannaplaybackend.controllers;
 
 import cz.muni.pv112.wannaplaybackend.dto.CreateUserDTO;
+import cz.muni.pv112.wannaplaybackend.dto.PartyDTO;
 import cz.muni.pv112.wannaplaybackend.dto.UserDTO;
+import cz.muni.pv112.wannaplaybackend.service.PartyService;
 import cz.muni.pv112.wannaplaybackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +20,43 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final PartyService partyService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PartyService partyService) {
         this.userService = userService;
+        this.partyService = partyService;
     }
 
     @GetMapping("")
     public List<UserDTO> all() {
-        log.info("Called all users.");
+        log.debug("Called all users.");
 
-        return this.userService.allUsers();
+        return userService.allUsers();
     }
 
     @PutMapping("")
     public long create(@RequestBody CreateUserDTO createUserDTO) {
-        log.info("Called create with: {}", createUserDTO);
+        log.debug("Called create with: {}", createUserDTO);
 
-        Long id = this.userService.createUser(createUserDTO);
+        long id = userService.createUser(createUserDTO);
 
         log.info("Created user with id: {}", id);
 
         return id;
+    }
+
+    @PostMapping("{id}/exists")
+    public boolean doesUserExists(@PathVariable Long id) {
+        log.debug("Called doesUserExists: {}", id);
+
+        return userService.userExists(id);
+    }
+
+    @GetMapping("{id}/parties")
+    public List<PartyDTO> userParties(@PathVariable Long id) {
+        log.debug("Called userParties: {}", id);
+
+        return partyService.findUserParties(id);
     }
 }
