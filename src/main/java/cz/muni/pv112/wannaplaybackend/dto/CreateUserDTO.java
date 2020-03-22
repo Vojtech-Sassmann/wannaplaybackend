@@ -8,6 +8,4 @@ import lombok.Data;
 @Data
 public class CreateUserDTO {
     private String nick;
-    private String externalSource;
-    private String externalId;
 }

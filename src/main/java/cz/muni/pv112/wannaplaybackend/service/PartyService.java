@@ -2,6 +2,7 @@ package cz.muni.pv112.wannaplaybackend.service;
 
 import cz.muni.pv112.wannaplaybackend.dto.CreatePartyDTO;
 import cz.muni.pv112.wannaplaybackend.dto.PartyDTO;
+import cz.muni.pv112.wannaplaybackend.security.Principal;
 
 import java.util.List;
 
@@ -10,12 +11,13 @@ import java.util.List;
  */
 public interface PartyService {
     /**
-     * Creates a party with given owner.
+     * Creates a party with given owner. The owner also becomes a
+     * member of the party.
      *
      * @param createPartyDTO data needed for creation
      * @return id of the new party
      */
-    long createParty(CreatePartyDTO createPartyDTO);
+    long createParty(CreatePartyDTO createPartyDTO, Principal principal);
 
     /**
      * Finds a party with given id. If no such party exists, null is returned.
