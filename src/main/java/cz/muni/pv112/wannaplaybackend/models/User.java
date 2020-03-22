@@ -3,7 +3,9 @@ package cz.muni.pv112.wannaplaybackend.models;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -37,5 +39,23 @@ public class User {
     private String externalSource;
 
     @OneToMany(mappedBy = "owner")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Party> ownedParties = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "post_tags",
+            joinColumns = { @JoinColumn(name = "party_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") })
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final Set<Party> parties = new HashSet<>();
+
+    public void addParty(Party party) {
+        this.parties.add(party);
+    }
+
+    public void removeParty(Party party) {
+        this.parties.remove(party);
+    }
 }

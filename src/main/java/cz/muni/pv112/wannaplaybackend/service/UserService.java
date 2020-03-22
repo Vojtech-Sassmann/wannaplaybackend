@@ -2,6 +2,7 @@ package cz.muni.pv112.wannaplaybackend.service;
 
 import cz.muni.pv112.wannaplaybackend.dto.CreateUserDTO;
 import cz.muni.pv112.wannaplaybackend.dto.UserDTO;
+import cz.muni.pv112.wannaplaybackend.security.Principal;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface UserService {
      * @param createUserDTO data needed for creation
      * @return id of the new user
      */
-    long createUser(CreateUserDTO createUserDTO);
+    long createUser(CreateUserDTO createUserDTO, Principal principal);
 
     /**
      * Finds all users that exists.

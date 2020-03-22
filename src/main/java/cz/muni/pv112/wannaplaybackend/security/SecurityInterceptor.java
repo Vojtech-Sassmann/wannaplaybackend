@@ -1,6 +1,8 @@
 package cz.muni.pv112.wannaplaybackend.security;
 
 import cz.muni.pv112.wannaplaybackend.config.WannaplayProperties;
+import cz.muni.pv112.wannaplaybackend.models.User;
+import cz.muni.pv112.wannaplaybackend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
@@ -9,6 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @author Vojtech Sassmann <vojtech.sassmann@gmail.com>
@@ -16,15 +19,21 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SecurityInterceptor implements HandlerInterceptor {
 
-    private final WannaplayProperties wannaplayProperties;
+    public static final String PRINCIPAL_ATTR = "Principal";
 
-    public SecurityInterceptor(WannaplayProperties wannaplayProperties) {
+    private final WannaplayProperties wannaplayProperties;
+    private final UserRepository userRepository;
+
+    public SecurityInterceptor(WannaplayProperties wannaplayProperties, UserRepository userRepository) {
         this.wannaplayProperties = wannaplayProperties;
+        this.userRepository = userRepository;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String authHeader = request.getHeader("Authorization");
+        String extSource = "facebook";
+
         if (authHeader == null) {
             log.warn("No authorization header is present.");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -36,11 +45,12 @@ public class SecurityInterceptor implements HandlerInterceptor {
         // TODO add google authorization
 
         RestTemplate restTemplate = new RestTemplate();
+        DataResponse data;
         try {
             ResponseEntity<DataResponse> res = restTemplate.getForEntity(
                     "https://graph.facebook.com/debug_token?input_token=" + inputToken +
                     "&access_token=" + appAccessToken.getAccess_token(), DataResponse.class);
-            DataResponse data = res.getBody();
+            data = res.getBody();
             if (data == null || data.getData() == null || !data.getData().isValid()) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 log.warn("Unauthorized");
@@ -51,6 +61,24 @@ public class SecurityInterceptor implements HandlerInterceptor {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
             return false;
         }
+
+
+        Optional<User> principalUser =
+                userRepository.findByExternalIdentity(data.getData().getUserId(), extSource);
+        if (!principalUser.isPresent() &&
+                !("/user".equals(request.getRequestURI()) && "PUT".equals(request.getMethod()))) {
+            log.warn("Method called with a not existing user, id: {}", data.getData().getUserId());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Method called with a not existing user.");
+            return false;
+        }
+
+        Principal principal = Principal.builder()
+                .id(principalUser.map(User::getId).orElse(null))
+                .externalId(data.getData().getUserId())
+                .externalSource(extSource)
+                .build();
+
+        request.setAttribute(PRINCIPAL_ATTR, principal);
 
         return true;
     }

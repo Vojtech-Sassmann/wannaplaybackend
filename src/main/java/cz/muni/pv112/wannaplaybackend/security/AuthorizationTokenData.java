@@ -18,5 +18,5 @@ public class AuthorizationTokenData {
     private boolean valid;
 
     @JsonProperty("user_id")
-    private Long userId;
+    private String userId;
 }

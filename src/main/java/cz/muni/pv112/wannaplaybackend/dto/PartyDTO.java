@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Vojtech Sassmann <vojtech.sassmann@gmail.com>
  */
@@ -15,4 +18,9 @@ import lombok.NoArgsConstructor;
 public class PartyDTO {
     private long id;
     private String name;
+    private final Set<PartyMemberDTO> members = new HashSet<>();
+
+    public void addMember(PartyMemberDTO memberDTO) {
+        this.members.add(memberDTO);
+    }
 }

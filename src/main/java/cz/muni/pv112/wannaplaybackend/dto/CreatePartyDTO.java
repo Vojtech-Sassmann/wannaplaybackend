@@ -7,6 +7,5 @@ import lombok.Data;
  */
 @Data
 public class CreatePartyDTO {
-    Long ownerId;
     String name;
 }
