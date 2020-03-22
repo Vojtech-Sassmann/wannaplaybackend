@@ -24,7 +24,13 @@ public class SecurityInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String inputToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null) {
+            log.warn("No authorization header is present.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
+        String inputToken = authHeader.replace("Bearer ", "");
         AppAccessToken appAccessToken = getAccessToken();
 
         // TODO add google authorization

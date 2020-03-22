@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long createUser(CreateUserDTO createUserDTO) {
+    public long createUser(CreateUserDTO createUserDTO) {
         Optional<User> alreadyCreatedUser = userRepository
                 .findByExternalIdentity(createUserDTO.getExternalId(), createUserDTO.getExternalSource());
 
@@ -40,6 +40,19 @@ public class UserServiceImpl implements UserService {
                 .externalId(createUserDTO.getExternalId())
                 .build());
         return createdUser.getId();
+    }
+
+    @Override
+    public UserDTO findById(Long id) {
+        return userRepository
+                .findById(id)
+                .map(this::mapToDTO)
+                .orElse(null);
+    }
+
+    @Override
+    public boolean userExists(Long id) {
+        return userRepository.findById(id).isPresent();
     }
 
     @Override

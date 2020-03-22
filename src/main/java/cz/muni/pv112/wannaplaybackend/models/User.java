@@ -36,6 +36,6 @@ public class User {
     @NotEmpty
     private String externalSource;
 
-    @OneToMany
-    private Set<Party> OwnedParties = new HashSet<>();
+    @OneToMany(mappedBy = "owner")
+    private Set<Party> ownedParties = new HashSet<>();
 }

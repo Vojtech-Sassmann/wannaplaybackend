@@ -9,6 +9,34 @@ import java.util.List;
  * @author Vojtech Sassmann <vojtech.sassmann@gmail.com>
  */
 public interface UserService {
-    Long createUser(CreateUserDTO createUserDTO);
+    /**
+     * Creates user from given data.
+     *
+     * @param createUserDTO data needed for creation
+     * @return id of the new user
+     */
+    long createUser(CreateUserDTO createUserDTO);
+
+    /**
+     * Finds all users that exists.
+     *
+     * @return list of all users
+     */
     List<UserDTO> allUsers();
+
+    /**
+     * Finds user by given id. If no such user exists, null is returned.
+     *
+     * @param id of the searched user
+     * @return found user, or null
+     */
+    UserDTO findById(Long id);
+
+    /**
+     * Checks if a user with given id exists.
+     *
+     * @param id of the searched user
+     * @return true, if user with given id exists, false otherwise
+     */
+    boolean userExists(Long id);
 }

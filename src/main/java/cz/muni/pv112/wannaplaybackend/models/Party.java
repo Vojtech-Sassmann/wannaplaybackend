@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Vojtech Sassmann <vojtech.sassmann@gmail.com>
@@ -24,5 +25,6 @@ public class Party {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private User owner;
 }
