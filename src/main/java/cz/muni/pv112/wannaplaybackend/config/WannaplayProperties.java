@@ -22,4 +22,7 @@ public class WannaplayProperties {
 
     @Value("${facebook.client.secret}")
     private String facebookClientSecret;
+
+    @Value("${google.client.id}")
+    private String googleClientId;
 }

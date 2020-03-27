@@ -19,7 +19,6 @@ import static cz.muni.pv112.wannaplaybackend.security.SecurityInterceptor.PRINCI
  */
 @RestController
 @Slf4j
-@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;
@@ -31,14 +30,14 @@ public class UserController {
         this.partyService = partyService;
     }
 
-    @GetMapping("")
+    @GetMapping("user")
     public List<UserDTO> all() {
         log.debug("Called all users.");
 
         return userService.allUsers();
     }
 
-    @PutMapping("")
+    @PutMapping("user")
     public long create(@RequestBody CreateUserDTO createUserDTO, @RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
         log.debug("Called create with: {}", createUserDTO);
 
@@ -49,14 +48,15 @@ public class UserController {
         return id;
     }
 
-    @PostMapping("{id}/exists")
-    public boolean doesUserExists(@PathVariable Long id) {
-        log.debug("Called doesUserExists: {}", id);
+    @GetMapping("user-exists")
+    public boolean doesUserExists() {
+        log.debug("Called doesUserExists.");
 
-        return userService.userExists(id);
+        // If the user does not exist, the interceptor would not let this method be called
+        return true;
     }
 
-    @GetMapping("{id}/parties")
+    @GetMapping("user/{id}/parties")
     public List<PartyDTO> userParties(@PathVariable Long id) {
         log.debug("Called userParties: {}", id);
 
