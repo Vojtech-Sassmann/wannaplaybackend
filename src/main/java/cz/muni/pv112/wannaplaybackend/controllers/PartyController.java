@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,5 +48,12 @@ public class PartyController {
 		log.info("Created party with id: {}", id);
 
 		return id;
+	}
+
+	@PostMapping("{id}/join")
+	public void joinParty(@PathVariable("id") Long id, @RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
+		log.debug("Join party called on id: {}", id);
+
+		partyService.joinParty(id, principal.getId());
 	}
 }

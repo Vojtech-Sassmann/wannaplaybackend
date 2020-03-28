@@ -11,7 +11,6 @@ import cz.muni.pv112.wannaplaybackend.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,6 +62,25 @@ public class PartyServiceImpl implements PartyService {
                 .findByOwner(owner.get()).stream()
                 .map(Mappers::mapParty)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void joinParty(Long partyId, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (!user.isPresent()) {
+            throw new UserNotExists("User with given id does not exist.");
+        }
+
+        Optional<Party> party = partyRepository.findById(partyId);
+
+        if (!party.isPresent()) {
+            throw new PartyNotExists("Party with given id does not exist.");
+        }
+
+        party.get().addMember(user.get());
+
+        partyRepository.save(party.get());
     }
 
     @Override
