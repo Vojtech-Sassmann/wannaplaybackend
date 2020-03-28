@@ -1,7 +1,8 @@
-package cz.muni.pv112.wannaplaybackend.security;
+package cz.muni.pv112.wannaplaybackend.service;
 
 import cz.muni.pv112.wannaplaybackend.dto.CreateEventDTO;
 import cz.muni.pv112.wannaplaybackend.dto.EventDTO;
+import cz.muni.pv112.wannaplaybackend.security.Principal;
 
 import java.util.List;
 
@@ -26,4 +27,12 @@ public interface EventService {
      * @return all events from user parties which are happening in the future.
      */
     List<EventDTO> getAllFutureEvents(Principal principal);
+
+    /**
+     * Adds the user of the current principal to the specified event.
+     *
+     * @param id event id
+     * @param principal current principal
+     */
+    void joinEvent(Long id, Principal principal);
 }

@@ -1,4 +1,4 @@
-package cz.muni.pv112.wannaplaybackend.service;
+package cz.muni.pv112.wannaplaybackend.service.impl;
 
 import cz.muni.pv112.wannaplaybackend.dto.Mappers;
 import cz.muni.pv112.wannaplaybackend.repository.UserRepository;
@@ -6,6 +6,8 @@ import cz.muni.pv112.wannaplaybackend.dto.CreateUserDTO;
 import cz.muni.pv112.wannaplaybackend.dto.UserDTO;
 import cz.muni.pv112.wannaplaybackend.models.User;
 import cz.muni.pv112.wannaplaybackend.security.Principal;
+import cz.muni.pv112.wannaplaybackend.service.UserService;
+import cz.muni.pv112.wannaplaybackend.service.exceptions.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService {
                 .findByExternalIdentity(principal.getExternalId(), principal.getExternalSource());
 
         if (alreadyCreatedUser.isPresent()) {
-            throw new UserAlreadyExists("There is already created user with given identity");
+            throw new UserAlreadyExistsException("There is already created user with given identity");
         }
 
         User createdUser = userRepository.save(User.builder()
