@@ -39,13 +39,28 @@ public class Party {
     @ToString.Exclude
     private final Set<User> members = new HashSet<>();
 
+    @OneToMany(mappedBy = "party")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final Set<Event> events = new HashSet<>();
+
     public void addMember(User user) {
-        this.members.add(user);
-        this.owner.addParty(this);
+        members.add(user);
+        user.addParty(this);
     }
 
     public void removeMember(User user) {
-        this.members.remove(user);
-        this.owner.removeParty(this);
+        members.remove(user);
+        user.removeParty(this);
+    }
+
+    public void addEvent(Event event) {
+        events.add(event);
+        event.setParty(this);
+    }
+
+    public void removeEvent(Event event) {
+        events.remove(event);
+        event.setParty(null);
     }
 }

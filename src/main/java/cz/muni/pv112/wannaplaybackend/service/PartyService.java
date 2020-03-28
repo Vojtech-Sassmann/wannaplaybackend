@@ -34,4 +34,13 @@ public interface PartyService {
      * @return list of all parties owned by given user
      */
     List<PartyDTO> findUserParties(long userId);
+
+    /**
+     * Add user with given id to the party with given id.
+     *
+     *
+     * @param partyId party id
+     * @param userId user id
+     */
+    void joinParty(Long partyId, Long userId);
 }

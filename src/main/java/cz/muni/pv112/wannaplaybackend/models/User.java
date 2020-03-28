@@ -51,6 +51,11 @@ public class User {
     @ToString.Exclude
     private final Set<Party> parties = new HashSet<>();
 
+    @ManyToMany(mappedBy = "participants")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final Set<Event> events = new HashSet<>();
+
     public void addParty(Party party) {
         this.parties.add(party);
     }

@@ -43,52 +43,74 @@ public class SecurityInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String authHeader = request.getHeader(AUTHORIZATION_HEADER);
-        String extSource = request.getHeader(EXT_SOURCE_HEADER);
-
-        if (authHeader == null) {
-            log.warn("No authorization header is present.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        String extSource = getUserExtSource(request, response);
+        if (extSource == null) {
             return false;
         }
 
-        String inputToken = authHeader.replace("Bearer ", "");
-
-        String extSourceUserId;
-        if (FACEBOOK_EXT_SOURCE.equals(extSource)) {
-            extSourceUserId = handleFacebookAuth(inputToken);
-        } else if (GOOGLE_EXT_SOURCE.equals(extSource)) {
-            extSourceUserId = handleGoogleAuth(inputToken);
-        } else {
-            // TODO send error
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid extSource.");
-            return false;
-        }
-
+        String extSourceUserId = getUserExtSourceId(request, response, extSource);
         if (extSourceUserId == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure.");
             return false;
         }
 
-        Optional<User> principalUser =
-                userRepository.findByExternalIdentity(extSourceUserId, extSource);
+        Optional<User> principalUser = userRepository.findByExternalIdentity(extSourceUserId, extSource);
 
-        if (!principalUser.isPresent() &&
-                !(request.getRequestURI().endsWith("/user") && "PUT".equals(request.getMethod()))) {
+        if (!principalUser.isPresent() && !isCallingCreateUserMethod(request)) {
             log.warn("Method called with a not existing user, id: {}", extSourceUserId);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Method called with a not existing user.");
             return false;
         }
 
+        setPrincipal(request, principalUser.orElse(null), extSource, extSourceUserId);
+
+        return true;
+    }
+
+    private void setPrincipal(HttpServletRequest request, User principalUser, String extSource, String extSourceUserId) {
         Principal principal = Principal.builder()
-                .id(principalUser.map(User::getId).orElse(null))
+                .id(principalUser != null ? principalUser.getId() : null)
                 .externalId(extSourceUserId)
                 .externalSource(extSource)
                 .build();
 
         request.setAttribute(PRINCIPAL_ATTR, principal);
+    }
 
-        return true;
+    private boolean isCallingCreateUserMethod(HttpServletRequest request) {
+        return request.getRequestURI().endsWith("/user") && "PUT".equals(request.getMethod());
+    }
+
+    private String getUserExtSource(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String extSource = request.getHeader(EXT_SOURCE_HEADER);
+        if (extSource == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing 'WP-ExtSource' header");
+            return null;
+        }
+
+        return extSource;
+    }
+
+    private String getUserExtSourceId(HttpServletRequest request, HttpServletResponse response, String extSource)
+            throws GeneralSecurityException, IOException {
+
+        String authHeader = request.getHeader(AUTHORIZATION_HEADER);
+
+        if (authHeader == null) {
+            log.warn("No authorization header is present.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+
+        String inputToken = authHeader.replace("Bearer ", "");
+
+        if (FACEBOOK_EXT_SOURCE.equals(extSource)) {
+            return handleFacebookAuth(inputToken);
+        } else if (GOOGLE_EXT_SOURCE.equals(extSource)) {
+            return handleGoogleAuth(inputToken);
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid extSource.");
+            return null;
+        }
     }
 
     private String handleGoogleAuth(String httpToken) throws GeneralSecurityException, IOException {
