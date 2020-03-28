@@ -1,4 +1,4 @@
-package cz.muni.pv112.wannaplaybackend.service;
+package cz.muni.pv112.wannaplaybackend.service.impl;
 
 import cz.muni.pv112.wannaplaybackend.dto.CreatePartyDTO;
 import cz.muni.pv112.wannaplaybackend.dto.Mappers;
@@ -8,6 +8,9 @@ import cz.muni.pv112.wannaplaybackend.models.User;
 import cz.muni.pv112.wannaplaybackend.repository.PartyRepository;
 import cz.muni.pv112.wannaplaybackend.repository.UserRepository;
 import cz.muni.pv112.wannaplaybackend.security.Principal;
+import cz.muni.pv112.wannaplaybackend.service.PartyService;
+import cz.muni.pv112.wannaplaybackend.service.exceptions.PartyNotExistsException;
+import cz.muni.pv112.wannaplaybackend.service.exceptions.UserNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +39,7 @@ public class PartyServiceImpl implements PartyService {
         Optional<User> owner = userRepository.findById(principal.getId());
 
         if (!owner.isPresent()) {
-            throw new UserNotExists("User with given id does not exist.");
+            throw new UserNotExistsException("User with given id does not exist.");
         }
 
         Party newParty = Party.builder()
@@ -55,7 +58,7 @@ public class PartyServiceImpl implements PartyService {
         Optional<User> owner = userRepository.findById(userId);
 
         if (!owner.isPresent()) {
-            throw new UserNotExists("User with givne id does not exist.");
+            throw new UserNotExistsException("User with givne id does not exist.");
         }
 
         return partyRepository
@@ -69,13 +72,13 @@ public class PartyServiceImpl implements PartyService {
         Optional<User> user = userRepository.findById(userId);
 
         if (!user.isPresent()) {
-            throw new UserNotExists("User with given id does not exist.");
+            throw new UserNotExistsException("User with given id does not exist.");
         }
 
         Optional<Party> party = partyRepository.findById(partyId);
 
         if (!party.isPresent()) {
-            throw new PartyNotExists("Party with given id does not exist.");
+            throw new PartyNotExistsException("Party with given id does not exist.");
         }
 
         party.get().addMember(user.get());
