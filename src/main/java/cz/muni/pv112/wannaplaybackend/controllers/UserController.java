@@ -49,11 +49,10 @@ public class UserController {
     }
 
     @GetMapping("user-exists")
-    public boolean doesUserExists() {
+    public boolean doesUserExists(@RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
         log.debug("Called doesUserExists.");
 
-        // If the user does not exist, the interceptor would not let this method be called
-        return true;
+        return principal.getId() != null;
     }
 
     @GetMapping("user/{id}/parties")

@@ -35,4 +35,12 @@ public interface EventService {
      * @param principal current principal
      */
     void joinEvent(Long id, Principal principal);
+
+    /**
+     * Finds event by its id.
+     *
+     * @param id id of searched event
+     * @return found event
+     */
+    EventDTO findById(Long id);
 }

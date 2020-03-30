@@ -91,6 +91,6 @@ public class PartyServiceImpl implements PartyService {
         return partyRepository
                 .findById(id)
                 .map(Mappers::mapParty)
-                .orElse(null);
+                .orElseThrow(() -> new PartyNotExistsException("Party with given id does not exist."));
     }
 }

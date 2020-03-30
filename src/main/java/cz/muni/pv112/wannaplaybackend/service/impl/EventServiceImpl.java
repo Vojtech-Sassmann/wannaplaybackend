@@ -115,6 +115,13 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event.get());
     }
 
+    @Override
+    public EventDTO findById(Long id) {
+        return eventRepository.findById(id)
+                .map(Mappers::mapEvent)
+                .orElseThrow(() -> new EventNotExistsException("Event with given id does not exist."));
+    }
+
     private boolean isEventFull(Event event) {
         return event.getCapacity() != null && event.getParticipants().size() >= event.getCapacity();
     }
