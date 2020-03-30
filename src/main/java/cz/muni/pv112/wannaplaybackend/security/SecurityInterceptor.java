@@ -50,14 +50,15 @@ public class SecurityInterceptor implements HandlerInterceptor {
 
         String extSourceUserId = getUserExtSourceId(request, response, extSource);
         if (extSourceUserId == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token.");
             return false;
         }
 
         Optional<User> principalUser = userRepository.findByExternalIdentity(extSourceUserId, extSource);
 
-        if (!principalUser.isPresent() && !isCallingCreateUserMethod(request)) {
+        if (!principalUser.isPresent() && !isCallingUnAuthorizedMethod(request)) {
             log.warn("Method called with a not existing user, id: {}", extSourceUserId);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Method called with a not existing user.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Method called with a not existing user.");
             return false;
         }
 
@@ -76,8 +77,9 @@ public class SecurityInterceptor implements HandlerInterceptor {
         request.setAttribute(PRINCIPAL_ATTR, principal);
     }
 
-    private boolean isCallingCreateUserMethod(HttpServletRequest request) {
-        return request.getRequestURI().endsWith("/user") && "PUT".equals(request.getMethod());
+    private boolean isCallingUnAuthorizedMethod(HttpServletRequest request) {
+        return (request.getRequestURI().endsWith("/user") && "PUT".equals(request.getMethod())) ||
+               (request.getRequestURI().endsWith("/user-exists") && "GET".equals(request.getMethod()));
     }
 
     private String getUserExtSource(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -164,8 +166,12 @@ public class SecurityInterceptor implements HandlerInterceptor {
                     "https://graph.facebook.com/debug_token?input_token=" + httpToken +
                     "&access_token=" + appAccessToken.getAccess_token(), FacebookToken.class);
             data = res.getBody();
-            if (data == null || data.getData() == null || !data.getData().isValid()) {
+            if (data == null || data.getData() == null) {
                 log.error("Failed to receive app access token from facebook");
+                return null;
+            }
+            if (!data.getData().isValid()) {
+                log.error("Received an expired token from facebook");
                 return null;
             }
         } catch (RestClientException e) {

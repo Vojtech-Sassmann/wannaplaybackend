@@ -32,6 +32,13 @@ public class EventController {
         this.eventService = eventService;
     }
 
+    @GetMapping("event/{id}")
+    public EventDTO findById(@PathVariable Long id) {
+        log.debug("Find event by id called.");
+
+        return eventService.findById(id);
+    }
+
     @PutMapping("event")
     public long create(@RequestBody CreateEventDTO createEventDTO, @RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
         log.debug("Create event called with: {}", createEventDTO);
