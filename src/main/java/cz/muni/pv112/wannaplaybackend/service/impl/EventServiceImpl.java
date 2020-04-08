@@ -73,8 +73,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDTO> getAllFutureEvents(Principal principal) {
-        Optional<User> user = userRepository.findById(principal.getId());
+    public List<EventDTO> getAllFutureEvents(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
 
         if (!user.isPresent()) {
             throw new UserNotExistsException("User with given id does not exist.");

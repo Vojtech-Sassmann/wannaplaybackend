@@ -2,8 +2,8 @@ package cz.muni.pv112.wannaplaybackend.controllers;
 
 import cz.muni.pv112.wannaplaybackend.dto.CreateEventDTO;
 import cz.muni.pv112.wannaplaybackend.dto.EventDTO;
-import cz.muni.pv112.wannaplaybackend.service.EventService;
 import cz.muni.pv112.wannaplaybackend.security.Principal;
+import cz.muni.pv112.wannaplaybackend.service.EventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 import static cz.muni.pv112.wannaplaybackend.security.SecurityInterceptor.PRINCIPAL_ATTR;
 
@@ -55,12 +53,5 @@ public class EventController {
         log.debug("Join event called.");
 
         eventService.joinEvent(id, principal);
-    }
-
-    @GetMapping("future-events")
-    public List<EventDTO> getAllFutureEvents(@RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
-        log.debug("GetAllFutureEvents called.");
-
-        return eventService.getAllFutureEvents(principal);
     }
 }

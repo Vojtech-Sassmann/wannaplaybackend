@@ -54,15 +54,28 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public List<PartyDTO> findUserParties(long userId) {
+    public List<PartyDTO> findUserOwnedParties(long userId) {
         Optional<User> owner = userRepository.findById(userId);
 
         if (!owner.isPresent()) {
-            throw new UserNotExistsException("User with givne id does not exist.");
+            throw new UserNotExistsException("User with given id does not exist.");
         }
 
         return partyRepository
                 .findByOwner(owner.get()).stream()
+                .map(Mappers::mapParty)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PartyDTO> findUserMemberParties(long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (!user.isPresent()) {
+            throw new UserNotExistsException("User with given id does not exist.");
+        }
+
+        return user.get().getParties().stream()
                 .map(Mappers::mapParty)
                 .collect(Collectors.toList());
     }
