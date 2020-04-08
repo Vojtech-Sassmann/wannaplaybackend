@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +27,8 @@ public class Party {
     @GeneratedValue
     private Long id;
 
+    @NotNull
+    @NotEmpty
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
