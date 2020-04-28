@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static cz.muni.pv112.wannaplaybackend.security.SecurityInterceptor.PRINCIPAL_ATTR;
@@ -78,6 +79,16 @@ public class UserController {
         log.debug("Called memberParties");
 
         return partyService.findUserMemberParties(id);
+    }
+
+    @GetMapping("user/{id}/parties")
+    public List<PartyDTO> parties(@PathVariable Long id) {
+        log.debug("Called parties");
+
+        List<PartyDTO> parties = new ArrayList<>();
+        parties.addAll(partyService.findUserOwnedParties(id));
+        parties.addAll(partyService.findUserMemberParties(id));
+        return parties;
     }
 
     @GetMapping("user/{id}/future-events")
