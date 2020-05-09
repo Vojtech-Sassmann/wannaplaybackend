@@ -13,9 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class Event {
 
     @NotNull
 //    @Future might cause trouble
-    private LocalDateTime dateTime;
+    private ZonedDateTime dateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
