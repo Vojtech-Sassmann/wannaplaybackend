@@ -5,7 +5,7 @@ import cz.muni.pv112.wannaplaybackend.models.Party;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -15,5 +15,5 @@ import java.util.Set;
 @Repository
 public interface EventRepository extends PagingAndSortingRepository<Event, Long> {
 
-    List<Event> findByDateTimeAfterAndPartyIn(LocalDateTime dateTime, Set<Party> parties);
+    List<Event> findByDateTimeAfterAndPartyIn(ZonedDateTime dateTime, Set<Party> parties);
 }

@@ -1,5 +1,6 @@
 package cz.muni.pv112.wannaplaybackend.controllers;
 
+import com.google.common.collect.Lists;
 import cz.muni.pv112.wannaplaybackend.dto.CreateUserDTO;
 import cz.muni.pv112.wannaplaybackend.dto.EventDTO;
 import cz.muni.pv112.wannaplaybackend.dto.PartyDTO;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static cz.muni.pv112.wannaplaybackend.security.SecurityInterceptor.PRINCIPAL_ATTR;
 
@@ -85,10 +89,10 @@ public class UserController {
     public List<PartyDTO> parties(@PathVariable Long id) {
         log.debug("Called parties");
 
-        List<PartyDTO> parties = new ArrayList<>();
+        Set<PartyDTO> parties = new HashSet<>();
         parties.addAll(partyService.findUserOwnedParties(id));
         parties.addAll(partyService.findUserMemberParties(id));
-        return parties;
+        return new ArrayList<>(parties);
     }
 
     @GetMapping("user/{id}/future-events")

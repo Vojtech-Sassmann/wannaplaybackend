@@ -4,7 +4,6 @@ import cz.muni.pv112.wannaplaybackend.models.Event;
 import cz.muni.pv112.wannaplaybackend.models.Party;
 import cz.muni.pv112.wannaplaybackend.models.User;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 /**

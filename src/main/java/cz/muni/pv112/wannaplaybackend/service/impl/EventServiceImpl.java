@@ -9,8 +9,8 @@ import cz.muni.pv112.wannaplaybackend.models.User;
 import cz.muni.pv112.wannaplaybackend.repository.EventRepository;
 import cz.muni.pv112.wannaplaybackend.repository.PartyRepository;
 import cz.muni.pv112.wannaplaybackend.repository.UserRepository;
-import cz.muni.pv112.wannaplaybackend.service.EventService;
 import cz.muni.pv112.wannaplaybackend.security.Principal;
+import cz.muni.pv112.wannaplaybackend.service.EventService;
 import cz.muni.pv112.wannaplaybackend.service.exceptions.EventFullException;
 import cz.muni.pv112.wannaplaybackend.service.exceptions.EventNotExistsException;
 import cz.muni.pv112.wannaplaybackend.service.exceptions.PartyNotExistsException;
@@ -19,7 +19,7 @@ import cz.muni.pv112.wannaplaybackend.service.exceptions.UserNotMemberOfPartyExc
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,7 +80,7 @@ public class EventServiceImpl implements EventService {
             throw new UserNotExistsException("User with given id does not exist.");
         }
 
-        return eventRepository.findByDateTimeAfterAndPartyIn(LocalDateTime.now(), user.get().getParties()).stream()
+        return eventRepository.findByDateTimeAfterAndPartyIn(ZonedDateTime.now(), user.get().getParties()).stream()
                 .map(Mappers::mapEvent)
                 .collect(Collectors.toList());
     }
