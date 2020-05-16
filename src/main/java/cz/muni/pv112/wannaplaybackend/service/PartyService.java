@@ -51,4 +51,12 @@ public interface PartyService {
      * @param userId user id
      */
     void joinParty(Long partyId, Long userId);
+
+    /**
+     * Remove user with given id from the party with given id.
+     *
+     * @param partyId party id
+     * @param userId user id
+     */
+    void leaveParty(Long partyId, Long userId);
 }

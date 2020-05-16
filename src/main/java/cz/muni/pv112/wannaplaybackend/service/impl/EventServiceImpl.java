@@ -86,6 +86,19 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public List<EventDTO> getUserFutureEvents(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (!user.isPresent()) {
+            throw new UserNotExistsException("User with given id does not exist.");
+        }
+
+        return eventRepository.findByDateTimeAfterAndParticipantsContains(ZonedDateTime.now(), user.get()).stream()
+                .map(Mappers::mapEvent)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void joinEvent(Long id, Principal principal) {
         Optional<User> user = userRepository.findById(principal.getId());
 
@@ -111,6 +124,25 @@ public class EventServiceImpl implements EventService {
         }
 
         event.get().addParticipant(user.get());
+
+        eventRepository.save(event.get());
+    }
+
+    @Override
+    public void leaveEvent(Long id, Principal principal) {
+        Optional<User> user = userRepository.findById(principal.getId());
+
+        if (!user.isPresent()) {
+            throw new UserNotExistsException("User with given id does not exist.");
+        }
+
+        Optional<Event> event = eventRepository.findById(id);
+
+        if (!event.isPresent()) {
+            throw new EventNotExistsException("Event with given id does not exist.");
+        }
+
+        event.get().getParticipants().remove(user.get());
 
         eventRepository.save(event.get());
     }

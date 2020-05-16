@@ -54,4 +54,11 @@ public class EventController {
 
         eventService.joinEvent(id, principal);
     }
+
+    @PostMapping("event/{id}/leave")
+    public void leaveEvent(@PathVariable("id") Long id, @RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
+        log.debug("Leave event called.");
+
+        eventService.leaveEvent(id, principal);
+    }
 }

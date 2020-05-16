@@ -100,6 +100,25 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
+    public void leaveParty(Long partyId, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (!user.isPresent()) {
+            throw new UserNotExistsException("User with given id does not exist.");
+        }
+
+        Optional<Party> party = partyRepository.findById(partyId);
+
+        if (!party.isPresent()) {
+            throw new PartyNotExistsException("Party with given id does not exist.");
+        }
+
+        party.get().getMembers().remove(user.get());
+
+        partyRepository.save(party.get());
+    }
+
+    @Override
     public PartyDTO findById(long id) {
         return partyRepository
                 .findById(id)

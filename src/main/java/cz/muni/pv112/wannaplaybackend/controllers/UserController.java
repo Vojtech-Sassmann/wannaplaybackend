@@ -101,4 +101,11 @@ public class UserController {
 
         return eventService.getAllFutureEvents(userId);
     }
+
+    @GetMapping("user/{id}/events")
+    public List<EventDTO> getUserFutureEvents(@PathVariable("id") Long userId) {
+        log.debug("GetUserFutureEvents called with {}.", userId);
+
+        return eventService.getUserFutureEvents(userId);
+    }
 }

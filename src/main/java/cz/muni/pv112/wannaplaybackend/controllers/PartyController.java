@@ -56,4 +56,11 @@ public class PartyController {
 
 		partyService.joinParty(id, principal.getId());
 	}
+
+	@PostMapping("{id}/leave")
+	public void leaveParty(@PathVariable("id") Long id, @RequestAttribute(PRINCIPAL_ATTR) Principal principal) {
+		log.debug("Leave party called with id: {}", id);
+
+		partyService.leaveParty(id, principal.getId());
+	}
 }

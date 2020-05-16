@@ -38,10 +38,26 @@ public interface EventService {
     void joinEvent(Long id, Principal principal);
 
     /**
+     * Leaves events with the given id.
+     *
+     * @param id event id
+     * @param principal current principal
+     */
+    void leaveEvent(Long id, Principal principal);
+
+    /**
      * Finds event by its id.
      *
      * @param id id of searched event
      * @return found event
      */
     EventDTO findById(Long id);
+
+    /**
+     * Find events which are attended by the given user.
+     *
+     * @param userId user id
+     * @return events which are attended by the given user
+     */
+    List<EventDTO> getUserFutureEvents(Long userId);
 }
