@@ -80,7 +80,8 @@ public class EventServiceImpl implements EventService {
             throw new UserNotExistsException("User with given id does not exist.");
         }
 
-        return eventRepository.findByDateTimeAfterAndPartyIn(ZonedDateTime.now(), user.get().getParties()).stream()
+        return eventRepository.findByDateTimeAfterAndPartyInAndParticipantsNotContaining(
+                    ZonedDateTime.now(), user.get().getParties(), user.get()).stream()
                 .map(Mappers::mapEvent)
                 .collect(Collectors.toList());
     }

@@ -19,9 +19,15 @@ public class Mappers {
     }
 
     public static PartyDTO mapParty(Party party) {
+        PartyOwnerDTO partyOwnerDTO = PartyOwnerDTO.builder()
+                .id(party.getOwner().getId())
+                .nick(party.getOwner().getNick())
+                .build();
+
         PartyDTO partyDTO = PartyDTO.builder()
                 .id(party.getId())
                 .name(party.getName())
+                .owner(partyOwnerDTO)
                 .build();
 
         party.getMembers().forEach(m -> partyDTO.addMember(mapPartyMember(m)));

@@ -19,6 +19,7 @@ public class PartyDTO {
     private long id;
     private String name;
     private final Set<PartyMemberDTO> members = new HashSet<>();
+    private PartyOwnerDTO owner;
 
     public void addMember(PartyMemberDTO memberDTO) {
         this.members.add(memberDTO);

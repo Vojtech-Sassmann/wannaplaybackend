@@ -16,7 +16,7 @@ import java.util.Set;
 @Repository
 public interface EventRepository extends PagingAndSortingRepository<Event, Long> {
 
-    List<Event> findByDateTimeAfterAndPartyIn(ZonedDateTime dateTime, Set<Party> parties);
+    List<Event> findByDateTimeAfterAndPartyInAndParticipantsNotContaining(ZonedDateTime dateTime, Set<Party> parties, User user);
 
     List<Event> findByDateTimeAfterAndParticipantsContains(ZonedDateTime dateTime, User user);
 }

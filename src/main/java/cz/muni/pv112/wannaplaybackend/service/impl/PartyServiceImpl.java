@@ -113,7 +113,7 @@ public class PartyServiceImpl implements PartyService {
             throw new PartyNotExistsException("Party with given id does not exist.");
         }
 
-        party.get().getMembers().remove(user.get());
+        party.get().removeMember(user.get());
 
         partyRepository.save(party.get());
     }
